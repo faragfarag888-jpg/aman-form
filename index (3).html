@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>أمان معاك في كل خطوة</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#1a237e 0%,#0d47a1 50%,#01579b 100%);min-height:100vh;padding:20px}
+.container{max-width:600px;margin:0 auto}
+.header{text-align:center;padding:30px 20px 20px;color:white}
+.logo{width:80px;height:80px;background:white;border-radius:50%;margin:0 auto 15px;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;color:#1a237e;box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+.header h1{font-size:22px;font-weight:800;margin-bottom:5px}
+.header p{font-size:14px;opacity:.85}
+.form-card{background:white;border-radius:20px;padding:25px;margin-bottom:15px;box-shadow:0 8px 30px rgba(0,0,0,0.15)}
+.section-title{font-size:16px;font-weight:700;color:#1a237e;margin-bottom:18px;padding-bottom:8px;border-bottom:2px solid #e3f2fd;display:flex;align-items:center;gap:8px}
+.section-title .icon{font-size:20px}
+.form-group{margin-bottom:16px}
+label{display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:6px}
+label .req{color:#e53935}
+input[type=text],input[type=tel],select,textarea{width:100%;padding:12px 15px;border:2px solid #e0e0e0;border-radius:10px;font-family:'Cairo',sans-serif;font-size:14px;color:#333;transition:border-color .2s,box-shadow .2s;outline:none;background:#fafafa;-webkit-appearance:none;appearance:none}
+input[type=text]:focus,input[type=tel]:focus,select:focus{border-color:#1a237e;background:white;box-shadow:0 0 0 3px rgba(26,35,126,0.1)}
+.field-error{border-color:#e53935!important}
+.error-msg{color:#e53935;font-size:12px;margin-top:4px;display:none}
+.select-wrapper{position:relative}
+.select-wrapper::after{content:'▼';position:absolute;left:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:#888;font-size:11px}
+.auto-filled{background:#e8f5e9!important;border-color:#43a047!important;color:#2e7d32!important;font-weight:600}
+.info-box{background:#e3f2fd;border:1px solid #90caf9;border-radius:10px;padding:12px 15px;font-size:13px;color:#1565c0;margin-bottom:16px;display:none}
+.info-box.show{display:block}
+.photo-area{border:2px dashed #bbb;border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;background:#fafafa}
+.photo-area:hover{border-color:#1a237e;background:#e8eaf6}
+.photo-icon{font-size:36px;margin-bottom:8px}
+.photo-area p{font-size:13px;color:#666}
+.photo-area input{display:none}
+.photo-preview{margin-top:12px;display:none}
+.photo-preview img{width:100%;border-radius:10px;max-height:200px;object-fit:cover}
+.location-area{border:2px solid #e0e0e0;border-radius:12px;padding:15px;cursor:pointer;transition:all .2s;background:#fafafa;text-align:center}
+.location-area.success{border-color:#43a047;background:#e8f5e9}
+.location-area.error-state{border-color:#e53935;background:#ffebee}
+.loc-icon{font-size:28px;margin-bottom:6px}
+.location-area p{font-size:13px;color:#666}
+.location-area.success p{color:#2e7d32;font-weight:600}
+.btn-submit{width:100%;padding:16px;background:linear-gradient(135deg,#1a237e,#0d47a1);color:white;border:none;border-radius:12px;font-family:'Cairo',sans-serif;font-size:17px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:5px}
+.btn-submit:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,35,126,0.4)}
+.btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.modal.show{display:flex}
+.modal-card{background:white;border-radius:20px;padding:30px;text-align:center;max-width:400px;width:100%}
+.modal-card .m-icon{font-size:60px;margin-bottom:15px}
+.modal-card h2{font-size:20px;font-weight:800;color:#1a237e;margin-bottom:10px}
+.modal-card p{font-size:14px;color:#666;line-height:1.6;margin-bottom:20px}
+.btn-new{width:100%;padding:13px;background:#1a237e;color:white;border:none;border-radius:10px;font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo">A</div>
+    <h1>أمان معاك في كل خطوة</h1>
+    <p>نموذج زيارة المندوب</p>
+  </div>
+
+  <form id="mainForm">
+
+  <!-- CARD 1: خط السير -->
+  <div class="form-card">
+    <div class="section-title"><span class="icon">📍</span> خط السير</div>
+
+    <div class="form-group">
+      <label for="region">الإقليم <span class="req">*</span></label>
+      <div class="select-wrapper">
+        <select id="region" name="region" onchange="onRegionChange()" required>
+          <option value="">-- اختر الإقليم --</option>
+        </select>
+      </div>
+      <div class="error-msg" id="err-region">يرجى اختيار الإقليم</div>
+    </div>
+
+    <div class="form-group">
+      <label for="gov">المحافظة <span class="req">*</span></label>
+      <div class="select-wrapper">
+        <select id="gov" name="gov" onchange="onGovChange()" required>
+          <option value="">-- اختر المحافظة --</option>
+        </select>
+      </div>
+      <div class="error-msg" id="err-gov">يرجى اختيار المحافظة</div>
+    </div>
+
+    <div class="form-group">
+      <label for="area">المنطقة <span class="req">*</span></label>
+      <div class="select-wrapper">
+        <select id="area" name="area" onchange="onAreaChange()" required>
+          <option value="">-- اختر المنطقة --</option>
+        </select>
+      </div>
+      <div class="error-msg" id="err-area">يرجى اختيار المنطقة</div>
+    </div>
+
+    <div class="form-group">
+      <label for="district">الحي / القرية <span class="req">*</span></label>
+      <div class="select-wrapper">
+        <select id="district" name="district" required>
+          <option value="">-- اختر الحي / القرية --</option>
+        </select>
+      </div>
+      <div class="error-msg" id="err-district">يرجى اختيار الحي / القرية</div>
+    </div>
+  </div>
+
+  <!-- CARD 2: بيانات الفريق -->
+  <div class="form-card">
+    <div class="section-title"><span class="icon">👤</span> بيانات الفريق</div>
+
+    <div class="info-box" id="repHint">
+      ✅ تم تحديد المنطقة — اختر اسمك من القائمة أدناه
+    </div>
+
+    <div class="form-group">
+      <label for="repName">اسم المندوب <span class="req">*</span></label>
+      <div class="select-wrapper">
+        <select id="repName" name="repName" onchange="onRepChange()" required>
+          <option value="">-- اختر اسمك --</option>
+        </select>
+      </div>
+      <div class="error-msg" id="err-repName">يرجى اختيار اسم المندوب</div>
+    </div>
+
+    <div class="form-group">
+      <label for="supName">اسم المشرف <span class="req">*</span></label>
+      <input type="text" id="supName" name="supName" placeholder="اسم المشرف" required>
+      <div class="error-msg" id="err-supName">يرجى إدخال اسم المشرف</div>
+    </div>
+
+    <div class="form-group">
+      <label for="smName">مدير المبيعات <span class="req">*</span></label>
+      <input type="text" id="smName" name="smName" placeholder="اسم مدير المبيعات" required>
+      <div class="error-msg" id="err-smName">يرجى إدخال اسم مدير المبيعات</div>
+    </div>
+
+    <div class="form-group">
+      <label for="rmName">المدير الإقليمي <span class="req">*</span></label>
+      <input type="text" id="rmName" name="rmName" placeholder="اسم المدير الإقليمي" required>
+      <div class="error-msg" id="err-rmName">يرجى إدخال اسم المدير الإقليمي</div>
+    </div>
+  </div>
+
+  <!-- CARD 3: بيانات التاجر -->
+  <div class="form-card">
+    <div class="section-title"><span class="icon">🏪</span> بيانات التاجر</div>
+
+    <div class="form-group">
+      <label for="shopName">اسم المحل <span class="req">*</span></label>
+      <input type="text" id="shopName" name="shopName" placeholder="اسم المحل" required>
+      <div class="error-msg" id="err-shopName">يرجى إدخال اسم المحل</div>
+    </div>
+
+    <div class="form-group">
+      <label for="clientName">اسم العميل <span class="req">*</span></label>
+      <input type="text" id="clientName" name="clientName" placeholder="اسم العميل" required>
+      <div class="error-msg" id="err-clientName">يرجى إدخال اسم العميل</div>
+    </div>
+
+    <div class="form-group">
+      <label for="traderPhone">موبايل التاجر <span class="req">*</span></label>
+      <input type="tel" id="traderPhone" name="traderPhone" placeholder="01XXXXXXXXX" maxlength="11" required>
+      <div class="error-msg" id="err-traderPhone">يرجى إدخال رقم موبايل صحيح (01XXXXXXXXX)</div>
+    </div>
+
+    <div class="form-group">
+      <label for="husamCode">رقم حساب ماكينة أمان <span class="req">*</span></label>
+      <input type="text" id="husamCode" name="husamCode" placeholder="رقم الحساب" required>
+      <div class="error-msg" id="err-husamCode">يرجى إدخال رقم الحساب</div>
+    </div>
+
+    <div class="form-group">
+      <label for="machineType">نوع الماكينة <span class="req">*</span></label>
+      <div class="select-wrapper">
+        <select id="machineType" name="machineType" required>
+          <option value="">-- اختر نوع الماكينة --</option>
+          <option value="Android">Android</option>
+          <option value="SP 930">SP 930</option>
+          <option value="SP 630">SP 630</option>
+          <option value="SP 600">SP 600</option>
+        </select>
+      </div>
+      <div class="error-msg" id="err-machineType">يرجى اختيار نوع الماكينة</div>
+    </div>
+
+    <div class="form-group">
+      <label for="merchantType">نشاط التاجر <span class="req">*</span></label>
+      <div class="select-wrapper">
+        <select id="merchantType" name="merchantType" required>
+          <option value="">-- اختر نشاط التاجر --</option>
+        </select>
+      </div>
+      <div class="error-msg" id="err-merchantType">يرجى اختيار نشاط التاجر</div>
+    </div>
+  </div>
+
+  <!-- CARD 4: الموقع والصورة -->
+  <div class="form-card">
+    <div class="section-title"><span class="icon">🗺️</span> موقع الزيارة</div>
+    <div class="form-group">
+      <div class="location-area" id="locationArea" onclick="captureLocation()">
+        <div class="loc-icon">📍</div>
+        <p id="locationText">اضغط لتحديد موقعك الحالي</p>
+      </div>
+      <input type="hidden" id="latitude" name="latitude">
+      <input type="hidden" id="longitude" name="longitude">
+    </div>
+
+    <div class="section-title" style="margin-top:15px"><span class="icon">📸</span> صورة المحل</div>
+    <div class="form-group">
+      <div class="photo-area" onclick="document.getElementById('photoInput').click()">
+        <div class="photo-icon">📷</div>
+        <p>اضغط لالتقاط صورة أو اختيار من المعرض</p>
+        <input type="file" id="photoInput" accept="image/*" capture="environment" onchange="previewPhoto(this)">
+      </div>
+      <div class="photo-preview" id="photoPreview">
+        <img id="photoImg" src="" alt="صورة المحل">
+      </div>
+    </div>
+  </div>
+
+  <button type="submit" class="btn-submit" id="submitBtn">✅ إرسال الزيارة</button>
+  </form>
+</div>
+
+<div class="modal" id="successModal">
+  <div class="modal-card">
+    <div class="m-icon">✅</div>
+    <h2>تم الإرسال بنجاح!</h2>
+    <p id="successMsg">تم تسجيل بيانات الزيارة بنجاح</p>
+    <button class="btn-new" onclick="resetForm()">زيارة جديدة</button>
+  </div>
+</div>
+
+<script>
+const WEBHOOK_URL = 'https://faralooo.app.n8n.cloud/webhook/bf2aca50-366b-4ba7-94c1-3faa059c050c';
+
+
+// ===== DATA =====
+const REPS_DATA = [{"name":"Emad Fawzy Abd El Wahab Mohamed","gov":"قنا","area":"ابو طشت","region":"جنوب الصعيد"},{"name":"Mahmoud Ezzat Mohamed Ahmed","gov":"قنا","area":"ابو طشت","region":"جنوب الصعيد"},{"name":"Ahmed Mohamed Abd El Hakim Hasan","gov":"قنا","area":"ابو طشت","region":"جنوب الصعيد"},{"name":"Youssef Abd El Lah Reyad Mohamed","gov":"قنا","area":"دشنا","region":"جنوب الصعيد"},{"name":"Khaled Abdelsabour Mohamed Hussein","gov":"قنا","area":"نجع حمادى","region":"جنوب الصعيد"},{"name":"Ali Shahat Abdelmaogod Ali","gov":"قنا","area":"مركز قنا","region":"جنوب الصعيد"},{"name":"Ahmed Mahmoud Abdeen Mohamed","gov":"قنا","area":"نقادة","region":"جنوب الصعيد"},{"name":"Abdallah Ashraf Khidry Mansour","gov":"قنا","area":"قفط","region":"جنوب الصعيد"},{"name":"Abd El Rahem Gamal Abd El Rahem Abd El Wahab Hussein","gov":"قنا","area":"دشنا","region":"جنوب الصعيد"},{"name":"Ahmed Abd Allah Sabry Ahmed","gov":"قنا","area":"قنا","region":"جنوب الصعيد"},{"name":"Adnan Mohamed Basha Mohamed","gov":"قنا","area":"قوص","region":"جنوب الصعيد"},{"name":"Mostafa Ismail Ahmed Ismail","gov":"قنا","area":"قنا","region":"جنوب الصعيد"},{"name":"Mohamed Mostafa Mohamed Abd El Karim","gov":"قنا","area":"قوص","region":"جنوب الصعيد"},{"name":"Sherif Abdelrady Ibrahim Mohamed Moawad","gov":"قنا","area":"قنا","region":"جنوب الصعيد"},{"name":"Hussein Ayman Mohamed Mobark","gov":"قنا","area":"قنا","region":"جنوب الصعيد"},{"name":"Ahmed Ali Mohamed Soliman","gov":"سوهاج","area":"طما","region":"وسط الصعيد"},{"name":"Eslam Talaat Abdelkhalek Abdelaal","gov":"سوهاج","area":"طما","region":"وسط الصعيد"},{"name":"Mohamed Abo El Fadl Abd El Aal Abd El Maboud","gov":"سوهاج","area":"طهطا","region":"وسط الصعيد"},{"name":"Rafaat Ahmed Bakhwagy Ahmed Azoz","gov":"سوهاج","area":"طهطا","region":"وسط الصعيد"},{"name":"Islam Rashad Ahmed Abdelrahman","gov":"سوهاج","area":"المراغة","region":"وسط الصعيد"},{"name":"Ahmed Youssry Mohamed","gov":"سوهاج","area":"البلينا","region":"وسط الصعيد"},{"name":"Mahmoud Mohsen Mohamed Abel Naem","gov":"سوهاج","area":"جرجا","region":"وسط الصعيد"},{"name":"Khaled Gamal Ramadan Badawy","gov":"سوهاج","area":"البلينا","region":"وسط الصعيد"},{"name":"Mostafa Mamdouh Mahmoud Abouelmagd","gov":"سوهاج","area":"جرجا","region":"وسط الصعيد"},{"name":"Abd Ellah Salah Abd Ellah Mohamed","gov":"سوهاج","area":"البلينا","region":"وسط الصعيد"},{"name":"Mahmoud Ahmed Kamel Abd El Aal","gov":"سوهاج","area":"نجع اولاد نصير","region":"وسط الصعيد"},{"name":"Ahmed Azzam Khalf Orabi","gov":"سوهاج","area":"ساقلتة","region":"وسط الصعيد"},{"name":"Hossam Ahmed El-Sayed Abdelhafiz","gov":"سوهاج","area":"اخميم","region":"وسط الصعيد"},{"name":"Mostafa Abou El Gheit Ahmed Ammar","gov":"سوهاج","area":"المنشاه","region":"وسط الصعيد"},{"name":"Hussein Mohsen Hassanein Ammer","gov":"سوهاج","area":"جرجا","region":"وسط الصعيد"},{"name":"Moamen Mahmoud Mohamed Mahmoud","gov":"سوهاج","area":"ثان سوهاج","region":"وسط الصعيد"},{"name":"Mohamed Ahmed Ali Soliman","gov":"أسوان","area":"كوم امبو","region":"جنوب الصعيد"},{"name":"Islam Ahmed Mohamed Khalil","gov":"أسوان","area":"دراو","region":"جنوب الصعيد"},{"name":"Abdelkarim Sayed Fahmy Ebeid","gov":"أسوان","area":"نصر النوبة","region":"جنوب الصعيد"},{"name":"Mohamed Gaber Rizk Salm","gov":"أسوان","area":"ادفو","region":"جنوب الصعيد"},{"name":"Ragab Mohamed Mohalel Hassan","gov":"أسوان","area":"ادفو","region":"جنوب الصعيد"},{"name":"Mohamed Ayman Abd Elkher Soliman","gov":"أسوان","area":"وسط البلد","region":"جنوب الصعيد"},{"name":"Mohamed Gamal Mahmoud Mohamed","gov":"أسوان","area":"المحموديه","region":"جنوب الصعيد"},{"name":"Mahmoud Refaat Soliman Abo El Ala","gov":"أسوان","area":"ابو سمبل","region":"جنوب الصعيد"},{"name":"Mohamed Hussein Ahmed Ibrahim","gov":"أسوان","area":"ابو الريش","region":"جنوب الصعيد"},{"name":"Mohamed Ahmed Mohamed Hasan","gov":"أسوان","area":"السيل غرب","region":"جنوب الصعيد"},{"name":"Badry  Mahmoud  Ahmed Farag","gov":"أسوان","area":"اطلس","region":"جنوب الصعيد"},{"name":"Ahmed Mahmoud Mohamed Amer","gov":"البحر الاحمر","area":"الغردقة","region":"جنوب الصعيد"},{"name":"Ahmed Abd El Rahim Mostafa Ali","gov":"البحر الاحمر","area":"القصير","region":"جنوب الصعيد"},{"name":"Mohamed Mostafa hassan Hussien Mohamed","gov":"البحر الاحمر","area":"الغردقة","region":"جنوب الصعيد"},{"name":"Emad Gebril Samwael Mousa","gov":"البحر الاحمر","area":"الغردقة","region":"جنوب الصعيد"},{"name":"Ahmed Khaled Ahmed Abd Allah","gov":"البحر الاحمر","area":"سفاجا","region":"جنوب الصعيد"},{"name":"Yasser Ashraf Ibrahim El-Desouky","gov":"الأقصر","area":"الاقصر","region":"جنوب الصعيد"},{"name":"Faisal Ahmed Mohamed Labib","gov":"الأقصر","area":"منشاة","region":"جنوب الصعيد"},{"name":"Ahmed Abo El Abaas Abd El Maab Abd El Rady","gov":"الأقصر","area":"الاقصر","region":"جنوب الصعيد"},{"name":"Mohamed Sayed Mohamed Boghdadey","gov":"الأقصر","area":"نجع الصياغ","region":"جنوب الصعيد"},{"name":"Mohamed Ahmed Ali Ahmed","gov":"الأقصر","area":"الاقصر","region":"جنوب الصعيد"},{"name":"Ahmed Abdelsattar Mohamed Mahmoud","gov":"الأقصر","area":"ارمنت","region":"جنوب الصعيد"},{"name":"Mahmoud Ali Ismail Ahmed","gov":"المنيا","area":"بنى مزار","region":"شمال الصعيد"},{"name":"Ahmed Abo El Khear Sayed Abd El Zaher","gov":"المنيا","area":"بنى مزار","region":"شمال الصعيد"},{"name":"Islam Fakhry  Abd Al Fattah  Abd A Hady","gov":"المنيا","area":"سمالوط","region":"شمال الصعيد"},{"name":"Tarek Ashraf Fawzy Mahmoud","gov":"المنيا","area":"سمالوط","region":"شمال الصعيد"},{"name":"Abd El Rehim Ibrahim Abd El Rehim Othman","gov":"المنيا","area":"مغاغة","region":"شمال الصعيد"},{"name":"Abdallah Mahmoud Abdelazim Salama","gov":"المنيا","area":"مغاغة","region":"شمال الصعيد"},{"name":"Mohamed Abd El Hamid Mahmoud Mohamed","gov":"المنيا","area":"ارض شلبى","region":"شمال الصعيد"},{"name":"Alaa Omar Dakhly Sanousy","gov":"المنيا","area":"المنيا","region":"شمال الصعيد"},{"name":"Mohamed Khalaf Hussein Adam","gov":"المنيا","area":"المنيا","region":"شمال الصعيد"},{"name":"Mohamed Saber Fadl Allah Makhlouf","gov":"المنيا","area":"المنيا","region":"شمال الصعيد"},{"name":"Abdallah Mohamed Hassan Mohamed Helmi Hassan","gov":"المنيا","area":"المنيا","region":"شمال الصعيد"},{"name":"Mohamed Mokhtar Ahmed Mohamed","gov":"المنيا","area":"المنيا","region":"شمال الصعيد"},{"name":"Ahmed Mohamed Abdelhamid Ali","gov":"المنيا","area":"المنيا","region":"شمال الصعيد"},{"name":"Amr Diab Hassanin Ali","gov":"بني سويف","area":"بنى سويف","region":"شمال الصعيد"},{"name":"Ahmed Refaat Shabaan Ibrahiem","gov":"الفيوم","area":"البحارى","region":"شمال الصعيد"},{"name":"Islam Ahmed Hassan Mohamed ELsayed","gov":"الفيوم","area":"الجامعة","region":"شمال الصعيد"},{"name":"Mohamed Taha Mahmoud Mohamed","gov":"بني سويف","area":"الفشن","region":"شمال الصعيد"},{"name":"Mohamed Gomaa Hassan Faisal","gov":"بني سويف","area":"اهناسيا المدينة","region":"شمال الصعيد"},{"name":"Mostafa  Abdelaziz Adham Mohamed","gov":"بني سويف","area":"سمسطا","region":"شمال الصعيد"},{"name":"Ahmed Sayed Salem Ahmed Elsayed","gov":"الفيوم","area":"المسلة","region":"شمال الصعيد"},{"name":"Kirolos Wael Edwar Henes","gov":"المنيا","area":"ملوى","region":"شمال الصعيد"},{"name":"Mahmoud Gamal Fahim Setouhy","gov":"المنيا","area":"ابو قرقاص","region":"شمال الصعيد"},{"name":"Mohamed Saddad Abd Al Hamid Abd Al Kareem","gov":"المنيا","area":"دير مواس","region":"شمال الصعيد"},{"name":"Mohamed Ali Hemdan Hazen","gov":"المنيا","area":"ملوى","region":"شمال الصعيد"},{"name":"Sherif Omar Wafaay Hassan","gov":"المنيا","area":"ملوى","region":"شمال الصعيد"},{"name":"Mohamed Salah Ahmed Hamed","gov":"المنيا","area":"دير مواس","region":"شمال الصعيد"},{"name":"Osama Ahmed Hekmat Farghaly","gov":"اسيوط","area":"صدفا","region":"وسط الصعيد"},{"name":"Abdallah Allam Bayoumi Mohamed","gov":"اسيوط","area":"البدارى","region":"وسط الصعيد"},{"name":"Saief Eldin Ahmed Shehata Sayed","gov":"اسيوط","area":"ساحل سليم","region":"وسط الصعيد"},{"name":"Mohamed Zakareya Mohamed Ahmed","gov":"اسيوط","area":"ابو تيج","region":"وسط الصعيد"},{"name":"Moustafa Mohamed Gaber Abden","gov":"اسيوط","area":"ابو تيج","region":"وسط الصعيد"},{"name":"Abdallah Abdelnasser Ahmed Radwan","gov":"اسيوط","area":"البدارى","region":"وسط الصعيد"},{"name":"Mohamed Kamal Mohamed Saber","gov":"اسيوط","area":"ساحل سليم","region":"وسط الصعيد"},{"name":"Bassem Fouad Abdelmalak Awadallah","gov":"اسيوط","area":"اسيوط","region":"وسط الصعيد"},{"name":"Moustafa Salah Hasan Ahmed","gov":"الوادي الجديد","area":"الخارجة","region":"جنوب الصعيد"},{"name":"Mahmoud Khalaf Allah Saeed Sayed","gov":"الوادي الجديد","area":"الفرافرة","region":"جنوب الصعيد"},{"name":"Mohamed Gomaa Mohmadien Gouda","gov":"اسيوط","area":"الفتح","region":"وسط الصعيد"},{"name":"Omar Mohamed Gaber Ahmed","gov":"اسيوط","area":"ابنوب","region":"وسط الصعيد"},{"name":"Epharim Nabiel FAhmy Gad","gov":"الوادي الجديد","area":"الواحات الداخلة","region":"جنوب الصعيد"},{"name":"Hossam Mohamed Tawik Hasan","gov":"اسيوط","area":"ثان اسيوط","region":"وسط الصعيد"},{"name":"Mohamed Sayed Galal Ahmed","gov":"اسيوط","area":"اول اسيوط","region":"وسط الصعيد"},{"name":"Ahmed Sherif Ahmed Mostafa","gov":"اسيوط","area":"ثان اسيوط","region":"وسط الصعيد"},{"name":"Mahmoud Abdelmoneim Mahmoud Abdelhafez","gov":"اسيوط","area":"اول اسيوط","region":"وسط الصعيد"},{"name":"Taha Hemayt Allah Abd El Aziz Hemayt Allah","gov":"اسيوط","area":"حى شرق","region":"وسط الصعيد"},{"name":"Ahmed Safwat Mohamed Mohamed","gov":"اسيوط","area":"ثان اسيوط","region":"وسط الصعيد"},{"name":"Mohamed Mostafa Mohamed Mohamed","gov":"اسيوط","area":"اسيوط","region":"وسط الصعيد"},{"name":"Mostafa Mahsoub Nouman Ahmed","gov":"اسيوط","area":"القوصية","region":"وسط الصعيد"},{"name":"Abd Al Hamid Qutb Khalaf Hasan","gov":"اسيوط","area":"منفلوط","region":"وسط الصعيد"},{"name":"Mohamed Ashraf Abd Al Raheem Sayed","gov":"اسيوط","area":"ديروط","region":"وسط الصعيد"},{"name":"Beshoy Nashaat Ghabreal Mekheal","gov":"اسيوط","area":"منفلوط","region":"وسط الصعيد"},{"name":"Ahmed Nasr El Din Tawfik Hasan","gov":"اسيوط","area":"القوصية","region":"وسط الصعيد"},{"name":"Mohamed Adel Kamal Abd El Rahman","gov":"مرسى مطروح","area":"الضبعة","region":"اقليم أسكندرية"},{"name":"Ahmed Saied Mahmoud Sultan","gov":"مرسى مطروح","area":"الضبعة","region":"اقليم أسكندرية"},{"name":"Hussein Eissa Hussein Eissa","gov":"مرسى مطروح","area":"سيوة","region":"اقليم أسكندرية"},{"name":"El Sayed Ibrahim El Sayed Soliman","gov":"مرسى مطروح","area":"الجلاء","region":"اقليم أسكندرية"},{"name":"Abd El Rady Abd El Rahem Abd El Rady Mohamed","gov":"الساحل الشمالى","area":"العلمين","region":"اقليم أسكندرية"},{"name":"Mahmoud Ibrahim  Awad  Ali","gov":"الساحل الشمالى","area":"اسكندرية الي الضبعة","region":"اقليم أسكندرية"},{"name":"Al Sayed Nasr Mansour Nagy","gov":"الساحل الشمالى","area":"العلمين","region":"اقليم أسكندرية"},{"name":"Moustafa Mohamed Gharib Abd El Aal","gov":"مرسى مطروح","area":"العلمين","region":"اقليم أسكندرية"},{"name":"Mahmoud Saad Mahmoud Abo El Ainain El Aryaan","gov":"مرسى مطروح","area":"الحمام","region":"اقليم أسكندرية"},{"name":"Hamdy Hassanin Mohamed Abd El Salam","gov":"الاسكندرية","area":"الرمل","region":"اقليم أسكندرية"},{"name":"Islam Ragab Ibrahim Gamal","gov":"الاسكندرية","area":"الابراهيمية","region":"اقليم أسكندرية"},{"name":"Mohamed Gaber Farouk Morsy","gov":"الاسكندرية","area":"الحضرة","region":"اقليم أسكندرية"},{"name":"Osama Desouky Ali Hassan","gov":"الاسكندرية","area":"ثانى الرمل","region":"اقليم أسكندرية"},{"name":"Emad Eldien Omeh Abdelaziz Shaaban Mohamed","gov":"الاسكندرية","area":"اول الرمل","region":"اقليم أسكندرية"},{"name":"Ahmed Mohamed Saad Abo Elnaga Hamza","gov":"الاسكندرية","area":"السيوف","region":"اقليم أسكندرية"},{"name":"Yasser Saad Mansour Mousa Mady","gov":"الاسكندرية","area":"العوايد","region":"اقليم أسكندرية"},{"name":"Mohamed Essam Mohamed Abdelgawad","gov":"الاسكندرية","area":"الحضرة الجديدة","region":"اقليم أسكندرية"},{"name":"Ehab Ibrahim Ahmed","gov":"الاسكندرية","area":"الرأس السوداء","region":"اقليم أسكندرية"},{"name":"Mohamed Abd El Hamed Zaki Mohamed","gov":"الاسكندرية","area":"سيدى بشر بحرى","region":"اقليم أسكندرية"},{"name":"Mostafa Salah El Din Salama Ali","gov":"الاسكندرية","area":"الاقبال","region":"اقليم أسكندرية"},{"name":"Mohamed Abd El Razik Mohamed Badry","gov":"الاسكندرية","area":"الملاحة","region":"اقليم أسكندرية"},{"name":"Mohamed Hassan Abdo Mohamed Abdo Feras","gov":"الاسكندرية","area":"المعمورة الشاطئ","region":"اقليم أسكندرية"},{"name":"Ahmed Hamdy Ibrahim Farag","gov":"الاسكندرية","area":"العصافرة","region":"اقليم أسكندرية"},{"name":"Shaker Mohamed Shaker Abdoullah El-Desouky","gov":"الاسكندرية","area":"المنتزة اول","region":"اقليم أسكندرية"},{"name":"Al Sayed Ehab Al Sayed Ahmed","gov":"الاسكندرية","area":"المنتزة اول","region":"اقليم أسكندرية"},{"name":"Abd Al Rahman Mohamed Hussein Mahmoud","gov":"الاسكندرية","area":"المنتزة اول","region":"اقليم أسكندرية"},{"name":"Islam Mahmoud Abdelsalam Bahnasy Ali","gov":"الاسكندرية","area":"ابو قير","region":"اقليم أسكندرية"},{"name":"Ramy Ibrahim Ahmed Ibrahim","gov":"الاسكندرية","area":"المنتزة اول","region":"اقليم أسكندرية"},{"name":"Abd El Rahman  Mohamed Fathy Mohamed","gov":"الاسكندرية","area":"الباب الجديد","region":"اقليم أسكندرية"},{"name":"Yasser Hefzy Ezzeldin Saqal","gov":"الاسكندرية","area":"ادارة شرطة ميناء الاسكندرية","region":"اقليم أسكندرية"},{"name":"Abd El Rahman Nabil Roshdy Moftah","gov":"الاسكندرية","area":"الانفوشى","region":"اقليم أسكندرية"},{"name":"Amir Gaber Emam Mohamed","gov":"الاسكندرية","area":"الازاريطة","region":"اقليم أسكندرية"},{"name":"Mohamed Abd El Ghany Mohamed Abd El Ghany Abd El Wahab","gov":"الاسكندرية","area":"الوزارة","region":"اقليم أسكندرية"},{"name":"Bilal Samir Mohamed Mansour Mohamed","gov":"الاسكندرية","area":"كرموز","region":"اقليم أسكندرية"},{"name":"Mostafa Dawod  Mahmoud Abdoullah Mohsib","gov":"الاسكندرية","area":"امبروزو","region":"اقليم أسكندرية"},{"name":"Mohamed saied Abd El Mawla Al Khouly","gov":"الاسكندرية","area":"القبارى","region":"اقليم أسكندرية"},{"name":"Ayman Mansour Ahmed Abdelmaged","gov":"الاسكندرية","area":"العامرية","region":"اقليم أسكندرية"},{"name":"Medhat Morsy Mohamed Taha","gov":"الاسكندرية","area":"برج العرب","region":"اقليم أسكندرية"},{"name":"Islam Soliman Mamadna allah Ahmed","gov":"الاسكندرية","area":"ابو يوسف","region":"اقليم أسكندرية"},{"name":"Ahmed Elsayed Mohamed Jawaida Saad","gov":"الاسكندرية","area":"البيطاش","region":"اقليم أسكندرية"},{"name":"Youssef Salah Othman Mohamed","gov":"الاسكندرية","area":"الدخيلة","region":"اقليم أسكندرية"},{"name":"Ahmed Nasser Hassanin Farghaly","gov":"الاسكندرية","area":"الهانوفيل","region":"اقليم أسكندرية"},{"name":"Ahmed Mohamed Adly Arkaz","gov":"الاسكندرية","area":"الدخيلة","region":"اقليم أسكندرية"},{"name":"Mohamed Abd Al Monam Mahmoud Hasan","gov":"الاسكندرية","area":"المتراس","region":"اقليم أسكندرية"},{"name":"Mohamed Ahmed Yousef Eid","gov":"البحيرة","area":"المحمودية","region":"اقليم أسكندرية"},{"name":"Salama Abo bakr  Mohamed Abo Bakr","gov":"البحيرة","area":"حوش عيسى","region":"اقليم أسكندرية"},{"name":"Ahmed Alaa Mohamed Salem Abdrabo","gov":"البحيرة","area":"ابو حمص","region":"اقليم أسكندرية"},{"name":"Mohamed Nabawy Ahmed Mohmed","gov":"البحيرة","area":"ابو المطامير","region":"اقليم أسكندرية"},{"name":"Ahmed Mahmoud Abdelghany Hamida","gov":"البحيرة","area":"ابو المطامير","region":"اقليم أسكندرية"},{"name":"Ali Saeed Nagy Ali","gov":"البحيرة","area":"كفر الدوار","region":"اقليم أسكندرية"},{"name":"Hossam Hasan Hamed Abd Al Hakam","gov":"البحيرة","area":"ادكو","region":"اقليم أسكندرية"},{"name":"Awad Ali Awad Ismail","gov":"البحيرة","area":"كوم حمادة","region":"اقليم أسكندرية"},{"name":"Mohamed Mostafa Ali Elgamal","gov":"البحيرة","area":"الدلنجات","region":"اقليم أسكندرية"},{"name":"Adel Elsayed Abdelkarem Youssef","gov":"البحيرة","area":"مدينة بدر","region":"اقليم أسكندرية"},{"name":"Mohamed Gomaa Ibrahim Elghrably","gov":"البحيرة","area":"شبراخيت","region":"اقليم أسكندرية"},{"name":"Ahmed Al Shahat Mohamed Hamouda","gov":"البحيرة","area":"كوم حمادة","region":"اقليم أسكندرية"},{"name":"Ashraf Hamed Abdesalam Matmoh Elaraby","gov":"البحيرة","area":"ايتاى البارود","region":"اقليم أسكندرية"},{"name":"Hussein Wagih Mohamed Elnieny","gov":"البحيرة","area":"ايتاى البارود","region":"اقليم أسكندرية"},{"name":"Abdelfattah Mohamed Mohamed Lashien","gov":"كفر الشيخ","area":"فوه","region":"شمال الدلتا"},{"name":"Mahmoud Ashraf Mohamed Rezk Ragab Abo Salem","gov":"كفر الشيخ","area":"دسوق","region":"شمال الدلتا"},{"name":"Ashraf Mohamed Mohamed Ibrahim","gov":"كفر الشيخ","area":"بندر كفر الشيخ","region":"شمال الدلتا"},{"name":"Sabry Mohamed Sabry Hasan","gov":"كفر الشيخ","area":"كفر الشيخ","region":"شمال الدلتا"},{"name":"Mohamed Abdelaziz Ahmed Mansour Sayed Ahmed","gov":"كفر الشيخ","area":"سيدى غازى","region":"شمال الدلتا"},{"name":"Shawky Galal Ibrahim Habshy","gov":"كفر الشيخ","area":"قلين","region":"شمال الدلتا"},{"name":"Mostafa Nabil Mostafa Ibrahem","gov":"كفر الشيخ","area":"الرياض","region":"شمال الدلتا"},{"name":"Mohamed Gamal Ahmed Awad","gov":"كفر الشيخ","area":"فوه","region":"شمال الدلتا"},{"name":"Ragab Reda Ragab Al Deeb","gov":"البحيرة","area":"دمنهور","region":"اقليم أسكندرية"},{"name":"Hamed Emad Hamed Youssef","gov":"البحيرة","area":"دمنهور","region":"اقليم أسكندرية"},{"name":"Mohamed Anwar Abd AlFattah Metwaly","gov":"البحيرة","area":"دمنهور","region":"اقليم أسكندرية"},{"name":"Karim Mohsen Mohamed Ali","gov":"البحيرة","area":"دمنهور","region":"اقليم أسكندرية"},{"name":"Mohamed Emad Ismail Ali","gov":"الغربية","area":"المحلة الكبرى","region":"جنوب الدلتا"},{"name":"Islam Reda El Said El Said Ghazy","gov":"الغربية","area":"ثان المحلة الكبرى","region":"جنوب الدلتا"},{"name":"Mahmoud Mohamed Mohamed Ragab","gov":"الغربية","area":"المحلة الكبرى","region":"جنوب الدلتا"},{"name":"Mohamed Eid Nousary Abd El Aziz Mohamed","gov":"الغربية","area":"ثان المحلة الكبرى","region":"جنوب الدلتا"},{"name":"Mohamed Ahmed Fathy Amin","gov":"الغربية","area":"اول المحلة الكبرى","region":"جنوب الدلتا"},{"name":"Moustafa Maged Mohamed El Abd","gov":"الغربية","area":"سمنود","region":"جنوب الدلتا"},{"name":"Moustafa Sherif El Saied Ismail","gov":"الغربية","area":"الجمهوريه","region":"جنوب الدلتا"},{"name":"Mahmoud Saad Mohamed Badr","gov":"الغربية","area":"السنطة","region":"جنوب الدلتا"},{"name":"Emad Moustafa Hasanin Abo Esha","gov":"الغربية","area":"زفتا","region":"جنوب الدلتا"},{"name":"Hossam Elsayed Helal Hegazy","gov":"الغربية","area":"قطور","region":"جنوب الدلتا"},{"name":"Ahmed Mahmoud Mohamed Mahmoud","gov":"الغربية","area":"اول طنطا","region":"جنوب الدلتا"},{"name":"Mohamed Walid Ashmawy Tolba","gov":"الغربية","area":"زفتا","region":"جنوب الدلتا"},{"name":"Ahmed Saied Ahmed Morsy saied","gov":"الغربية","area":"السنطة","region":"جنوب الدلتا"},{"name":"Atef Ahmed Mohamed Morsy","gov":"الغربية","area":"زفتا","region":"جنوب الدلتا"},{"name":"Mohamed Abdelkader Mohamed Khedr","gov":"الغربية","area":"طنطا","region":"جنوب الدلتا"},{"name":"Abdelhamid Ahmed Abdelhamid Ahmed Elkasrawy","gov":"الغربية","area":"اول طنطا","region":"جنوب الدلتا"},{"name":"Mostafa Ahmed Ghraib Mousa","gov":"الغربية","area":"طنطا","region":"جنوب الدلتا"},{"name":"Hassan Elsayed Hassan Mostafa Hezo","gov":"الغربية","area":"بسيون","region":"جنوب الدلتا"},{"name":"Ahmed Abd Elmoneim Shehata El Dalgamouny","gov":"الغربية","area":"كفر الزيات","region":"جنوب الدلتا"},{"name":"Ahmed Mabrouk Abdelgayed Abdellatief Mousa","gov":"الغربية","area":"كفر الزيات","region":"جنوب الدلتا"},{"name":"Tarek Gamal Bassiouny Fahmy Elnagar","gov":"الغربية","area":"بسيون","region":"جنوب الدلتا"},{"name":"Bassem Ibrahim El Sayed Mohamed","gov":"الغربية","area":"ثان طنطا","region":"جنوب الدلتا"},{"name":"Mohamed Helal El Sayed Mandoh Ghamry","gov":"المنوفية","area":"الباجور","region":"جنوب الدلتا"},{"name":"Ahmed Elsayed Abo Elghait Elsayed Madkour","gov":"المنوفية","area":"الباجور","region":"جنوب الدلتا"},{"name":"Abbas Elsayed Abbas Montaser","gov":"المنوفية","area":"اشمون","region":"جنوب الدلتا"},{"name":"Mostafa mahmoud mohamed mostafa","gov":"المنوفية","area":"اشمون","region":"جنوب الدلتا"},{"name":"Ibrahem Zakaria Ahmed Hegazy","gov":"المنوفية","area":"شبين الكوم","region":"جنوب الدلتا"},{"name":"Ahmed Elsayed Hassan Arab","gov":"المنوفية","area":"شبين الكوم","region":"جنوب الدلتا"},{"name":"Moustafa Al Sayed Mohamed Darwesh","gov":"المنوفية","area":"الشهداء","region":"جنوب الدلتا"},{"name":"Amir Ahmed Farag Mousa","gov":"المنوفية","area":"شبين الكوم","region":"جنوب الدلتا"},{"name":"Essam Elsayed Abdelhafez Hssan Eaql","gov":"المنوفية","area":"بركة السبع","region":"جنوب الدلتا"},{"name":"Mohamed Mahmoud Mohamed Mahmoud Khadr","gov":"المنوفية","area":"بركة السبع","region":"جنوب الدلتا"},{"name":"Emad El Din Bahaa Ali Safan","gov":"المنوفية","area":"شبين الكوم","region":"جنوب الدلتا"},{"name":"Mohamed Ibrahem El Sayed Ibrahem","gov":"المنوفية","area":"شبين الكوم","region":"جنوب الدلتا"},{"name":"Mahmoud Atef Mohamed Nuer","gov":"المنوفية","area":"شبين الكوم","region":"جنوب الدلتا"},{"name":"Mohamed Sobhi Mohamed Hassan Elghoul","gov":"القليوبية","area":"طوخ","region":"أقليم القاهرة الكبري"},{"name":"Sobhy Mohamed Sobhy Ahmed","gov":"القليوبية","area":"بيجام","region":"أقليم القاهرة الكبري"},{"name":"Essam Fotouh Abd El Aziz Ibrahim","gov":"القليوبية","area":"شبين القناطر","region":"أقليم القاهرة الكبري"},{"name":"Hossam Hasan El Sayed Mohamed","gov":"القليوبية","area":"بنها","region":"أقليم القاهرة الكبري"},{"name":"Ahmed Abd El Sadek Abd El Hamid Abd El Sadek","gov":"القليوبية","area":"كفر شكر","region":"أقليم القاهرة الكبري"},{"name":"Saied Mohamed Saied Ali","gov":"القليوبية","area":"شبرا الخيمة","region":"أقليم القاهرة الكبري"},{"name":"Mohamed Elsayed Mohamed Ali Elboghdady","gov":"القليوبية","area":"بهتيم","region":"أقليم القاهرة الكبري"},{"name":"Mahmoud Ahmed Gomaa khalil","gov":"المنوفية","area":"منوف","region":"جنوب الدلتا"},{"name":"Islam Nagy Nabawy Ibrahim","gov":"المنوفية","area":"قويسنا","region":"جنوب الدلتا"},{"name":"Islam Yasser Reyad Sayed Ahmed El Assy","gov":"المنوفية","area":"منوف","region":"جنوب الدلتا"},{"name":"Mahmoud Waheed Abd El Aziz Abd El Wahab","gov":"المنوفية","area":"منوف","region":"جنوب الدلتا"},{"name":"Ahmed Gomaa Tawfek Hegazy","gov":"المنوفية","area":"سرس الليان","region":"جنوب الدلتا"},{"name":"Mohamed Gamil Mohamed Abd El Dayem Ahmed","gov":"المنوفية","area":"قويسنا","region":"جنوب الدلتا"},{"name":"Mahmoud Mokhtar Abdelmaksoud Abdelaal","gov":"المنوفية","area":"منوف","region":"جنوب الدلتا"},{"name":"Mohamed Mostafa Ahmed Al Kholy","gov":"البحيرة","area":"منوف","region":"جنوب الدلتا"},{"name":"Mahmoud Mohamed Mohamed Abd Allah","gov":"الشرقية","area":"اولاد صقر","region":"جنوب الدلتا"},{"name":"Elsayed Ali Ahmed Elnagdi soliman","gov":"الشرقية","area":"ابو كبير","region":"جنوب الدلتا"},{"name":"Ahmed Abd El Salam Mohamed Ali","gov":"الشرقية","area":"فاقوس","region":"جنوب الدلتا"},{"name":"Ahmed Sami Ali Ismail","gov":"الشرقية","area":"فاقوس","region":"جنوب الدلتا"},{"name":"Ahmed Adel El Nagdy Mohamed","gov":"الشرقية","area":"فاقوس","region":"جنوب الدلتا"},{"name":"Ahmed Gamal Abdelmegied Hussien Elhabit","gov":"الشرقية","area":"منيا القمح","region":"جنوب الدلتا"},{"name":"Mohamed Elsayed Mohamed Ahmed Elesawy","gov":"الشرقية","area":"ههيا","region":"جنوب الدلتا"},{"name":"Basem Ezzat Yahia Abd Al Fattah","gov":"الشرقية","area":"ديرب نجم","region":"جنوب الدلتا"},{"name":"Mohamed Saber Mohamed Mohamed","gov":"الشرقية","area":"منيا القمح","region":"جنوب الدلتا"},{"name":"Youssef Emaad Othman Ali","gov":"الشرقية","area":"منيا القمح","region":"جنوب الدلتا"},{"name":"Adel Saied Meghawry El Sayed","gov":"الشرقية","area":"منيا القمح","region":"جنوب الدلتا"},{"name":"Ahmed Mohamed Attia Ali","gov":"الشرقية","area":"الزقازيق","region":"جنوب الدلتا"},{"name":"karim Yaser Elsayed Elaraby","gov":"الشرقية","area":"الزقازيق","region":"جنوب الدلتا"},{"name":"Mohamed Elsayed Dawoud Elsayed","gov":"الشرقية","area":"الزقازيق","region":"جنوب الدلتا"},{"name":"Ahmed Saeed Abdullah Mohamed","gov":"الشرقية","area":"ثان الزقازيق","region":"جنوب الدلتا"},{"name":"Mohamed Samy Mohamed Hafez","gov":"الشرقية","area":"الزقازيق","region":"جنوب الدلتا"},{"name":"Mosbah Hammouda Ibrahim Amin","gov":"الشرقية","area":"الزقازيق","region":"جنوب الدلتا"},{"name":"Sameh Kamal Abd Al Maged Ali","gov":"الشرقية","area":"الزقازيق","region":"جنوب الدلتا"},{"name":"Nassar Elsayed  Nasser  Mohamed","gov":"الشرقية","area":"القرين","region":"جنوب الدلتا"},{"name":"Mohamed Said Ahmed Mohamed Elkomey","gov":"الشرقية","area":"بلبيس","region":"جنوب الدلتا"},{"name":"Ahmed Mostafa Abd El Maksoud Abdo","gov":"الشرقية","area":"بلبيس","region":"جنوب الدلتا"},{"name":"Mohamed Ahmed Nageb El Wan","gov":"الشرقية","area":"بلبيس","region":"جنوب الدلتا"},{"name":"Mohamed Abo El Nour Hammad Amer","gov":"الشرقية","area":"بلبيس","region":"جنوب الدلتا"},{"name":"Mohamed Ahmed Abd Al Rahman  Mekawy","gov":"الشرقية","area":"ابو حماد","region":"جنوب الدلتا"},{"name":"Mohamed El Sayed Husseiny Ali","gov":"الشرقية","area":"ابو حماد","region":"جنوب الدلتا"},{"name":"Mahmoud El Sayed El Sayed EL Shazly","gov":"الشرقية","area":"بلبيس","region":"جنوب الدلتا"},{"name":"Mohamed Mahmoud Mohamed Abd El Hamid","gov":"الشرقية","area":"بلبيس","region":"جنوب الدلتا"},{"name":"Ahmed Ahmed Saad Ibrahim","gov":"بور سعيد","area":"حى الضواحى","region":"القناة"},{"name":"Abdoullah Mohamed Mohamed Kamal Monssef","gov":"بور سعيد","area":"تعاونيات الجيزه","region":"القناة"},{"name":"Nagah Abo El Magd Mohamed Abd El Masoud","gov":"بور سعيد","area":"المنطقة الصناعية","region":"القناة"},{"name":"Mohamed Walid Samir Mohamed Ebaid","gov":"بور سعيد","area":"حى الشرق","region":"القناة"},{"name":"Taher Mohamed El Sayed Mohamed Mohamedain Hilal","gov":"بور سعيد","area":"تعاونيات الزهور","region":"القناة"},{"name":"Kareem AlSayed AlSayed Ahmed","gov":"بور سعيد","area":"حى العرب","region":"القناة"},{"name":"Kirolos Reda Meshel Fawzy","gov":"الدقهلية","area":"السنبلاوين","region":"شمال الدلتا"},{"name":"Abd El Rahman Mohamed Mahmoud Yousef","gov":"القاهرة","area":"الدراسة","region":"أقليم القاهرة الكبري"},{"name":"Hisham Magdy Hanafy Abdou","gov":"القاهرة","area":"عابدين","region":"أقليم القاهرة الكبري"},{"name":"Ahmed Hussein Mokhtar Fouad Mohamed","gov":"القاهرة","area":"مصر القديمة","region":"أقليم القاهرة الكبري"},{"name":"Moahmed Ibrahim Mahmoud Mohamed","gov":"القاهرة","area":"عباسية","region":"أقليم القاهرة الكبري"},{"name":"Hossam Hassan Mohamed Ramdan","gov":"القاهرة","area":"منشية ناصر","region":"أقليم القاهرة الكبري"},{"name":"Mostafa Mahmoud Hussein Soliman","gov":"القاهرة","area":"الدرب الاحمر","region":"أقليم القاهرة الكبري"},{"name":"Ahmed Mohamed Mansour Mohamed","gov":"القاهرة","area":"الساحل","region":"أقليم القاهرة الكبري"},{"name":"Amer Eid Okasha Mohamed","gov":"القاهرة","area":"الشرابية","region":"أقليم القاهرة الكبري"},{"name":"Mohamed Wahed Mohamed Farag","gov":"القاهرة","area":"الزيتون","region":"أقليم القاهرة الكبري"},{"name":"Mohamed Saied Sayed Mohamed","gov":"القاهرة","area":"المطرية","region":"أقليم القاهرة الكبري"},{"name":"Ayman Safy Ibrahim Ali","gov":"القاهرة","area":"شبرا","region":"أقليم القاهرة الكبري"},{"name":"Ahmed Mohamed Helmy Mohamed","gov":"القاهرة","area":"شبرا","region":"أقليم القاهرة الكبري"},{"name":"Islam Hussien Mohamed Mahmoud","gov":"القاهرة","area":"الزاوية الحمراء","region":"أقليم القاهرة الكبري"},{"name":"Ahmed Reda Farag MArzouk","gov":"القاهرة","area":"عين شمس","region":"أقليم القاهرة الكبري"},{"name":"Khalid Salah Farag Omara","gov":"الجيزة","area":"الشرفاء","region":"أقليم القاهرة الكبري"},{"name":"Hossam Ayoub Zakaria Ayoub Afify","gov":"القاهرة","area":"عزبة النخل","region":"أقليم القاهرة الكبري"},{"name":"Kareem Adel Ahmed Mohamed","gov":"القاهرة","area":"عزبة النخل","region":"أقليم القاهرة الكبري"},{"name":"Ahmed Salah Abdelallim Ahmed","gov":"القاهرة","area":"المرج","region":"أقليم القاهرة الكبري"},{"name":"Hassan Saeed Hassan Soliman","gov":"القاهرة","area":"عين شمس","region":"أقليم القاهرة الكبري"},{"name":"Mahmoud Ahmed Mahmoud Ahmed Mohamed","gov":"القاهرة","area":"النزهة الجديدة","region":"أقليم القاهرة الكبري"},{"name":"Mahmoud Osama Sayed Mohamed Gomaa","gov":"القليوبية","area":"مدينة العبور","region":"أقليم القاهرة الكبري"},{"name":"Medhat Makram Saber Hakim","gov":"القاهرة","area":"الخصوص","region":"أقليم القاهرة الكبري"},{"name":"Mohamed Atito Khalaf Raslan","gov":"القاهرة","area":"مدينة العبور","region":"أقليم القاهرة الكبري"},{"name":"Ahmed Mohamed Abd El Rahman El Sayed","gov":"القاهرة","area":"مدينة السلام","region":"أقليم القاهرة الكبري"},{"name":"Ahmed Ehab Saied Azab Mohamed","gov":"القاهرة","area":"مدينة السلام","region":"أقليم القاهرة الكبري"},{"name":"Ayman Eid Sayed Ahmed","gov":"القاهرة","area":"مدينة السلام","region":"أقليم القاهرة الكبري"},{"name":"Moustafa Mahmoud  Mohamed Ibrahim","gov":"القاهرة","area":"مصر الجديدة","region":"أقليم القاهرة الكبري"},{"name":"Mohamed Ragab Abd El Hamid Abd El Magid","gov":"القاهرة","area":"مصر الجديدة","region":"أقليم القاهرة الكبري"},{"name":"Ahmed Mohamed Esmat Shokry","gov":"القاهرة","area":"مصر الجديدة","region":"أقليم القاهرة الكبري"},{"name":"Mohamed Saber Ibrahem Abd El Aleem","gov":"القاهرة","area":"القاهرة الجديدة","region":"أقليم القاهرة الكبري"},{"name":"Ahmed Farag Attia Abdallah","gov":"القاهرة","area":"مصر الجديدة","region":"أقليم القاهرة الكبري"},{"name":"Mohamed Hussein Mohamed Ahmed Seif","gov":"القاهرة","area":"المقطم","region":"أقليم القاهرة الكبري"},{"name":"Mostafa Mohamed Abd El Khaleq Ahmed","gov":"القاهرة","area":"دار السلام","region":"أقليم القاهرة الكبري"},{"name":"Mohamed Kamel Sayed Mohamed","gov":"القاهرة","area":"المعادى","region":"أقليم القاهرة الكبري"},{"name":"Ali Mahmoud Ali Ali","gov":"القاهرة","area":"المعادى","region":"أقليم القاهرة الكبري"},{"name":"Ammar Ahmed Farouk Ahmed","gov":"القاهرة","area":"مدينة 15 مايو","region":"أقليم القاهرة الكبري"},{"name":"Shady Fady Abdelqader Mohamed","gov":"القاهرة","area":"التبين","region":"أقليم القاهرة الكبري"},{"name":"Abdelhady Salah Eldin Ali Abdelhady","gov":"القاهرة","area":"حلوان","region":"أقليم القاهرة الكبري"},{"name":"Sameh Fawzy Saleh Soubeh","gov":"القاهرة","area":"حلوان","region":"أقليم القاهرة الكبري"},{"name":"Mohamed Abdelwahab Mohamed Abdallah","gov":"القاهرة","area":"حدائق حلوان","region":"أقليم القاهرة الكبري"},{"name":"Abdelrahman Abdelaaty Hussein Mohamed","gov":"القاهرة","area":"حلوان","region":"أقليم القاهرة الكبري"},{"name":"Karim Mohamed Sabaq Mohamed","gov":"القاهرة","area":"حلوان","region":"أقليم القاهرة الكبري"},{"name":"Abdelrahman Abdeltawab Deeb Sayed","gov":"القاهرة","area":"وادى حوف","region":"أقليم القاهرة الكبري"},{"name":"Mohamed Atef Mohamed Abdallah","gov":"الجيزة","area":"فيصل","region":"أقليم القاهرة الكبري"},{"name":"Haytham Ahmed Hashim Ahmed Abd El Haq","gov":"الجيزة","area":"فيصل","region":"أقليم القاهرة الكبري"},{"name":"Ahmed Mahmoud Abdelrahman Mohamed","gov":"الجيزة","area":"فيصل","region":"أقليم القاهرة الكبري"},{"name":"Hossam Elsaadawy Abdelzaher Zaky","gov":"الجيزة","area":"فيصل","region":"أقليم القاهرة الكبري"},{"name":"Mostafa Ismail Abdelmaksoud Ali","gov":"الجيزة","area":"فيصل","region":"أقليم القاهرة الكبري"},{"name":"Hassan Mostafa Mohamed Shehab","gov":"الجيزة","area":"فيصل","region":"أقليم القاهرة الكبري"},{"name":"Kamel Saber Kamel Abd El Ghaffar Galal","gov":"الجيزة","area":"حدائق الاهرام","region":"أقليم القاهرة الكبري"},{"name":"Moustafa Hashem Mohamed Ahmed","gov":"الجيزة","area":"فيصل","region":"أقليم القاهرة الكبري"},{"name":"Youssef Emad Salah Soultan","gov":"الجيزة","area":"الجيزة","region":"أقليم القاهرة الكبري"},{"name":"Faisal Mohamed Abdelaziz Mohamed","gov":"الجيزة","area":"الكيت كات","region":"أقليم القاهرة الكبري"},{"name":"Mohamed Walid Abdo Mohamed","gov":"الجيزة","area":"الدقى","region":"أقليم القاهرة الكبري"},{"name":"Akram Taha Muhamed Mahmoud","gov":"الجيزة","area":"بولاق الدكرور","region":"أقليم القاهرة الكبري"},{"name":"Mohamed Ahmed Ibrahem Roshdy Abd El Rahman","gov":"الجيزة","area":"بولاق الدكرور","region":"أقليم القاهرة الكبري"},{"name":"Moustafa Mohamed Abd El Sabour Mohamed","gov":"الجيزة","area":"المهندسين","region":"أقليم القاهرة الكبري"},{"name":"Seif Ayman Fawaz Farag","gov":"الجيزة","area":"الوراق","region":"أقليم القاهرة الكبري"},{"name":"Saif El Din Khaled Mohamed Awad","gov":"الجيزة","area":"بولاق الدكرور","region":"أقليم القاهرة الكبري"},{"name":"Mohamed Khaled Mohamed Adam","gov":"الجيزة","area":"امبابه","region":"أقليم القاهرة الكبري"},{"name":"Ahmed Samir Gaad Rezk Abd Allah","gov":"الجيزة","area":"امبابه","region":"أقليم القاهرة الكبري"},{"name":"Abd Allah Ahmed Abd El Halim Shahat","gov":"الجيزة","area":"البراجيل","region":"أقليم القاهرة الكبري"},{"name":"Mohamed Rabea Abdou Hussein","gov":"الجيزة","area":"بشتيل","region":"أقليم القاهرة الكبري"},{"name":"Mohamed Magdy Mohamed Shalkany El Sayed","gov":"الجيزة","area":"مدينة 6 اكتوبر","region":"أقليم القاهرة الكبري"},{"name":"Hossam Reda Ahmed Ali","gov":"الجيزة","area":"السادس من اكتوبر","region":"أقليم القاهرة الكبري"},{"name":"Ahmed Sayed Abd El Hamid Abd El Ellah","gov":"الجيزة","area":"السادس من اكتوبر","region":"أقليم القاهرة الكبري"},{"name":"Mounir Mohamed Mounir Ahmed","gov":"الجيزة","area":"قسم الشيخ زايد","region":"أقليم القاهرة الكبري"},{"name":"Mohamed Sabry Farag Nazier","gov":"الجيزة","area":"البدرشين","region":"أقليم القاهرة الكبري"},{"name":"Ramdan Hamdy Tohamy Ahmed Badawy","gov":"الجيزة","area":"الحوامدية","region":"أقليم القاهرة الكبري"},{"name":"Khalid Hisham Mohamed Saad","gov":"الجيزة","area":"العياط","region":"أقليم القاهرة الكبري"},{"name":"Ahmed Mohamed Abd El Fatah Taha Ahmed Mahdy","gov":"الجيزة","area":"ابو النمرس","region":"أقليم القاهرة الكبري"},{"name":"Amr Mohamed Fawzy Khalil Ibrahim","gov":"الجيزة","area":"الصف","region":"أقليم القاهرة الكبري"},{"name":"Mohamed Nady Salem Sayed","gov":"الجيزة","area":"الصف","region":"أقليم القاهرة الكبري"},{"name":"Mahmoud  Abdelmoez Azzam Muhamed","gov":"الجيزة","area":"البدرشين","region":"أقليم القاهرة الكبري"},{"name":"Assem Mohamed Mohamed Mostafa Hassan","gov":"الجيزة","area":"البدرشين","region":"أقليم القاهرة الكبري"},{"name":"Ahmed Mahmoud Hassan Mohamed","gov":"الجيزة","area":"طموه","region":"أقليم القاهرة الكبري"},{"name":"Alaa Hany Atrees Aqbi","gov":"الجيزة","area":"العياط","region":"أقليم القاهرة الكبري"},{"name":"Mohamed Samy Ewais Mohamed Mahfouz","gov":"الجيزة","area":"الهرم","region":"أقليم القاهرة الكبري"},{"name":"Ali Gomaa Ali Ahmed","gov":"الجيزة","area":"الهرم","region":"أقليم القاهرة الكبري"},{"name":"Eid Farid Ahmed Sayed Mostafa","gov":"الجيزة","area":"المنيب","region":"أقليم القاهرة الكبري"},{"name":"Islam Abd El Azim Abd El Tawab Abd El Metaal","gov":"الجيزة","area":"الهرم","region":"أقليم القاهرة الكبري"},{"name":"Mahmoud Tarik Abuelfutoh Hamid","gov":"الجيزة","area":"الهرم","region":"أقليم القاهرة الكبري"},{"name":"Hesham Salah Eissa Mohamed","gov":"الجيزة","area":"الهرم","region":"أقليم القاهرة الكبري"},{"name":"Ahmed Mohamed Abd El Fatah Taha Ahmed Mahdy","gov":"الجيزة","area":"ابو النمرس","region":"أقليم القاهرة الكبري"},{"name":"Amr Mohamed Fawzy Khalil Ibrahim","gov":"الجيزة","area":"الصف","region":"أقليم القاهرة الكبري"},{"name":"Mohamed Nady Salem Sayed","gov":"الجيزة","area":"الصف","region":"أقليم القاهرة الكبري"},{"name":"Mahmoud  Abdelmoez Azzam Muhamed","gov":"الجيزة","area":"البدرشين","region":"أقليم القاهرة الكبري"},{"name":"Assem Mohamed Mohamed Mostafa Hassan","gov":"الجيزة","area":"البدرشين","region":"أقليم القاهرة الكبري"},{"name":"Ahmed Mahmoud Hassan Mohamed","gov":"الجيزة","area":"طموه","region":"أقليم القاهرة الكبري"},{"name":"Alaa Hany Atrees Aqbi","gov":"الجيزة","area":"العياط","region":"أقليم القاهرة الكبري"},{"name":"Mohamed Samy Ewais Mohamed Mahfouz","gov":"الجيزة","area":"الهرم","region":"أقليم القاهرة الكبري"},{"name":"Ali Gomaa Ali Ahmed","gov":"الجيزة","area":"الهرم","region":"أقليم القاهرة الكبري"},{"name":"Eid Farid Ahmed Sayed Mostafa","gov":"الجيزة","area":"المنيب","region":"أقليم القاهرة الكبري"},{"name":"Islam Abd El Azim Abd El Tawab Abd El Metaal","gov":"الجيزة","area":"الهرم","region":"أقليم القاهرة الكبري"},{"name":"Mahmoud Tarik Abuelfutoh Hamid","gov":"الجيزة","area":"الهرم","region":"أقليم القاهرة الكبري"},{"name":"Hesham Salah Eissa Mohamed","gov":"الجيزة","area":"الهرم","region":"أقليم القاهرة الكبري"}];
+const ROUTES_DATA = [{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"ابو النمرس","district":"ابو النمرس"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"البدرشين","district":"البدرشين"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"البراجيل","district":"البراجيل"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"الجيزة","district":"الجيزة"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"الحوامدية","district":"الحوامدية"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"الدقى","district":"الدقى"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"السادس من اكتوبر","district":"السادس من اكتوبر"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"الشرفاء","district":"الشرفاء"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"الصف","district":"الصف"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"العياط","district":"العياط"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"الكيت كات","district":"الكيت كات"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"المنيب","district":"المنيب"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"المهندسين","district":"المهندسين"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"الهرم","district":"الهرم"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"الوراق","district":"الوراق"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"امبابه","district":"امبابه"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"بشتيل","district":"بشتيل"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"بولاق الدكرور","district":"بولاق الدكرور"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"حدائق الاهرام","district":"حدائق الاهرام"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"طموه","district":"طموه"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"فيصل","district":"فيصل"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"قسم الشيخ زايد","district":"قسم الشيخ زايد"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"مدينة 6 اكتوبر","district":"مدينة 6 اكتوبر"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"التبين","district":"التبين"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"الخصوص","district":"الخصوص"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"الدراسة","district":"الدراسة"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"الدرب الاحمر","district":"الدرب الاحمر"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"الزاوية الحمراء","district":"الزاوية الحمراء"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"الزيتون","district":"الزيتون"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"الساحل","district":"الساحل"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"الشرابية","district":"الشرابية"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"القاهرة الجديدة","district":"القاهرة الجديدة"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"المرج","district":"المرج"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"المطرية","district":"المطرية"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"المعادى","district":"المعادى"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"المقطم","district":"المقطم"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"النزهة الجديدة","district":"النزهة الجديدة"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"حدائق حلوان","district":"حدائق حلوان"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"حلوان","district":"حلوان"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"دار السلام","district":"دار السلام"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"شبرا","district":"شبرا"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"عابدين","district":"عابدين"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"عباسية","district":"عباسية"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"عزبة النخل","district":"عزبة النخل"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"عين شمس","district":"عين شمس"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"مدينة 15 مايو","district":"مدينة 15 مايو"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"مدينة السلام","district":"مدينة السلام"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"مدينة العبور","district":"مدينة العبور"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"مصر الجديدة","district":"مصر الجديدة"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"مصر القديمة","district":"مصر القديمة"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"منشية ناصر","district":"منشية ناصر"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"وادى حوف","district":"وادى حوف"},{"region":"أقليم القاهرة الكبري","gov":"القليوبية","area":"بنها","district":"بنها"},{"region":"أقليم القاهرة الكبري","gov":"القليوبية","area":"بهتيم","district":"بهتيم"},{"region":"أقليم القاهرة الكبري","gov":"القليوبية","area":"بيجام","district":"بيجام"},{"region":"أقليم القاهرة الكبري","gov":"القليوبية","area":"شبرا الخيمة","district":"شبرا الخيمة"},{"region":"أقليم القاهرة الكبري","gov":"القليوبية","area":"شبين القناطر","district":"شبين القناطر"},{"region":"أقليم القاهرة الكبري","gov":"القليوبية","area":"طوخ","district":"طوخ"},{"region":"أقليم القاهرة الكبري","gov":"القليوبية","area":"كفر شكر","district":"كفر شكر"},{"region":"أقليم القاهرة الكبري","gov":"القليوبية","area":"مدينة العبور","district":"مدينة العبور"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"ابو قير","district":"ابو قير"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"ابو يوسف","district":"ابو يوسف"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"ادارة شرطة ميناء الاسكندرية","district":"ادارة شرطة ميناء الاسكندرية"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"الابراهيمية","district":"الابراهيمية"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"الازاريطة","district":"الازاريطة"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"الاقبال","district":"الاقبال"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"الانفوشى","district":"الانفوشى"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"الباب الجديد","district":"الباب الجديد"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"البيطاش","district":"البيطاش"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"الحضرة","district":"الحضرة"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"الحضرة الجديدة","district":"الحضرة الجديدة"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"الدخيلة","district":"الدخيلة"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"الرأس السوداء","district":"الرأس السوداء"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"الرمل","district":"الرمل"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"السيوف","district":"السيوف"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"العامرية","district":"العامرية"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"العصافرة","district":"العصافرة"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"العوايد","district":"العوايد"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"القبارى","district":"القبارى"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"المتراس","district":"المتراس"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"المعمورة الشاطئ","district":"المعمورة الشاطئ"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"الملاحة","district":"الملاحة"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"المنتزة اول","district":"المنتزة اول"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"الهانوفيل","district":"الهانوفيل"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"الوزارة","district":"الوزارة"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"امبروزو","district":"امبروزو"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"اول الرمل","district":"اول الرمل"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"برج العرب","district":"برج العرب"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"ثانى الرمل","district":"ثانى الرمل"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"سيدى بشر بحرى","district":"سيدى بشر بحرى"},{"region":"اقليم أسكندرية","gov":"الاسكندرية","area":"كرموز","district":"كرموز"},{"region":"اقليم أسكندرية","gov":"البحيرة","area":"ابو المطامير","district":"ابو المطامير"},{"region":"اقليم أسكندرية","gov":"البحيرة","area":"ابو حمص","district":"ابو حمص"},{"region":"اقليم أسكندرية","gov":"البحيرة","area":"ادكو","district":"ادكو"},{"region":"اقليم أسكندرية","gov":"البحيرة","area":"الدلنجات","district":"الدلنجات"},{"region":"اقليم أسكندرية","gov":"البحيرة","area":"المحمودية","district":"المحمودية"},{"region":"اقليم أسكندرية","gov":"البحيرة","area":"ايتاى البارود","district":"ايتاى البارود"},{"region":"اقليم أسكندرية","gov":"البحيرة","area":"حوش عيسى","district":"حوش عيسى"},{"region":"اقليم أسكندرية","gov":"البحيرة","area":"دمنهور","district":"دمنهور"},{"region":"اقليم أسكندرية","gov":"البحيرة","area":"شبراخيت","district":"شبراخيت"},{"region":"اقليم أسكندرية","gov":"البحيرة","area":"كفر الدوار","district":"كفر الدوار"},{"region":"اقليم أسكندرية","gov":"البحيرة","area":"كوم حمادة","district":"كوم حمادة"},{"region":"اقليم أسكندرية","gov":"البحيرة","area":"مدينة بدر","district":"مدينة بدر"},{"region":"اقليم أسكندرية","gov":"الساحل الشمالى","area":"اسكندرية الي الضبعة","district":"اسكندرية الي الضبعة"},{"region":"اقليم أسكندرية","gov":"الساحل الشمالى","area":"العلمين","district":"العلمين"},{"region":"اقليم أسكندرية","gov":"مرسى مطروح","area":"الجلاء","district":"الجلاء"},{"region":"اقليم أسكندرية","gov":"مرسى مطروح","area":"الحمام","district":"الحمام"},{"region":"اقليم أسكندرية","gov":"مرسى مطروح","area":"الضبعة","district":"الضبعة"},{"region":"اقليم أسكندرية","gov":"مرسى مطروح","area":"العلمين","district":"العلمين"},{"region":"اقليم أسكندرية","gov":"مرسى مطروح","area":"سيوة","district":"سيوة"},{"region":"القناة","gov":"بور سعيد","area":"المنطقة الصناعية","district":"المنطقة الصناعية"},{"region":"القناة","gov":"بور سعيد","area":"تعاونيات الجيزه","district":"تعاونيات الجيزه"},{"region":"القناة","gov":"بور سعيد","area":"تعاونيات الزهور","district":"تعاونيات الزهور"},{"region":"القناة","gov":"بور سعيد","area":"حى الشرق","district":"حى الشرق"},{"region":"القناة","gov":"بور سعيد","area":"حى الضواحى","district":"حى الضواحى"},{"region":"القناة","gov":"بور سعيد","area":"حى العرب","district":"حى العرب"},{"region":"جنوب الدلتا","gov":"البحيرة","area":"منوف","district":"منوف"},{"region":"جنوب الدلتا","gov":"الشرقية","area":"ابو حماد","district":"ابو حماد"},{"region":"جنوب الدلتا","gov":"الشرقية","area":"ابو كبير","district":"ابو كبير"},{"region":"جنوب الدلتا","gov":"الشرقية","area":"الزقازيق","district":"الزقازيق"},{"region":"جنوب الدلتا","gov":"الشرقية","area":"القرين","district":"القرين"},{"region":"جنوب الدلتا","gov":"الشرقية","area":"اولاد صقر","district":"اولاد صقر"},{"region":"جنوب الدلتا","gov":"الشرقية","area":"بلبيس","district":"بلبيس"},{"region":"جنوب الدلتا","gov":"الشرقية","area":"ثان الزقازيق","district":"ثان الزقازيق"},{"region":"جنوب الدلتا","gov":"الشرقية","area":"ديرب نجم","district":"ديرب نجم"},{"region":"جنوب الدلتا","gov":"الشرقية","area":"فاقوس","district":"فاقوس"},{"region":"جنوب الدلتا","gov":"الشرقية","area":"منيا القمح","district":"منيا القمح"},{"region":"جنوب الدلتا","gov":"الشرقية","area":"ههيا","district":"ههيا"},{"region":"جنوب الدلتا","gov":"الغربية","area":"الجمهوريه","district":"الجمهوريه"},{"region":"جنوب الدلتا","gov":"الغربية","area":"السنطة","district":"السنطة"},{"region":"جنوب الدلتا","gov":"الغربية","area":"المحلة الكبرى","district":"المحلة الكبرى"},{"region":"جنوب الدلتا","gov":"الغربية","area":"اول المحلة الكبرى","district":"اول المحلة الكبرى"},{"region":"جنوب الدلتا","gov":"الغربية","area":"اول طنطا","district":"اول طنطا"},{"region":"جنوب الدلتا","gov":"الغربية","area":"بسيون","district":"بسيون"},{"region":"جنوب الدلتا","gov":"الغربية","area":"ثان المحلة الكبرى","district":"ثان المحلة الكبرى"},{"region":"جنوب الدلتا","gov":"الغربية","area":"ثان طنطا","district":"ثان طنطا"},{"region":"جنوب الدلتا","gov":"الغربية","area":"زفتا","district":"زفتا"},{"region":"جنوب الدلتا","gov":"الغربية","area":"سمنود","district":"سمنود"},{"region":"جنوب الدلتا","gov":"الغربية","area":"طنطا","district":"طنطا"},{"region":"جنوب الدلتا","gov":"الغربية","area":"قطور","district":"قطور"},{"region":"جنوب الدلتا","gov":"الغربية","area":"كفر الزيات","district":"كفر الزيات"},{"region":"جنوب الدلتا","gov":"المنوفية","area":"اشمون","district":"اشمون"},{"region":"جنوب الدلتا","gov":"المنوفية","area":"الباجور","district":"الباجور"},{"region":"جنوب الدلتا","gov":"المنوفية","area":"الشهداء","district":"الشهداء"},{"region":"جنوب الدلتا","gov":"المنوفية","area":"بركة السبع","district":"بركة السبع"},{"region":"جنوب الدلتا","gov":"المنوفية","area":"سرس الليان","district":"سرس الليان"},{"region":"جنوب الدلتا","gov":"المنوفية","area":"شبين الكوم","district":"شبين الكوم"},{"region":"جنوب الدلتا","gov":"المنوفية","area":"قويسنا","district":"قويسنا"},{"region":"جنوب الدلتا","gov":"المنوفية","area":"منوف","district":"منوف"},{"region":"جنوب الصعيد","gov":"أسوان","area":"ابو الريش","district":"ابو الريش"},{"region":"جنوب الصعيد","gov":"أسوان","area":"ابو سمبل","district":"ابو سمبل"},{"region":"جنوب الصعيد","gov":"أسوان","area":"ادفو","district":"ادفو"},{"region":"جنوب الصعيد","gov":"أسوان","area":"اطلس","district":"اطلس"},{"region":"جنوب الصعيد","gov":"أسوان","area":"السيل غرب","district":"السيل غرب"},{"region":"جنوب الصعيد","gov":"أسوان","area":"المحموديه","district":"المحموديه"},{"region":"جنوب الصعيد","gov":"أسوان","area":"دراو","district":"دراو"},{"region":"جنوب الصعيد","gov":"أسوان","area":"كوم امبو","district":"كوم امبو"},{"region":"جنوب الصعيد","gov":"أسوان","area":"نصر النوبة","district":"نصر النوبة"},{"region":"جنوب الصعيد","gov":"أسوان","area":"وسط البلد","district":"وسط البلد"},{"region":"جنوب الصعيد","gov":"الأقصر","area":"ارمنت","district":"ارمنت"},{"region":"جنوب الصعيد","gov":"الأقصر","area":"الاقصر","district":"الاقصر"},{"region":"جنوب الصعيد","gov":"الأقصر","area":"منشاة","district":"منشاة"},{"region":"جنوب الصعيد","gov":"الأقصر","area":"نجع الصياغ","district":"نجع الصياغ"},{"region":"جنوب الصعيد","gov":"البحر الاحمر","area":"الغردقة","district":"الغردقة"},{"region":"جنوب الصعيد","gov":"البحر الاحمر","area":"القصير","district":"القصير"},{"region":"جنوب الصعيد","gov":"البحر الاحمر","area":"سفاجا","district":"سفاجا"},{"region":"جنوب الصعيد","gov":"الوادي الجديد","area":"الخارجة","district":"الخارجة"},{"region":"جنوب الصعيد","gov":"الوادي الجديد","area":"الفرافرة","district":"الفرافرة"},{"region":"جنوب الصعيد","gov":"الوادي الجديد","area":"الواحات الداخلة","district":"الواحات الداخلة"},{"region":"جنوب الصعيد","gov":"قنا","area":"ابو طشت","district":"ابو طشت"},{"region":"جنوب الصعيد","gov":"قنا","area":"دشنا","district":"دشنا"},{"region":"جنوب الصعيد","gov":"قنا","area":"قفط","district":"قفط"},{"region":"جنوب الصعيد","gov":"قنا","area":"قنا","district":"قنا"},{"region":"جنوب الصعيد","gov":"قنا","area":"قوص","district":"قوص"},{"region":"جنوب الصعيد","gov":"قنا","area":"مركز قنا","district":"مركز قنا"},{"region":"جنوب الصعيد","gov":"قنا","area":"نجع حمادى","district":"نجع حمادى"},{"region":"جنوب الصعيد","gov":"قنا","area":"نقادة","district":"نقادة"},{"region":"شمال الدلتا","gov":"الدقهلية","area":"السنبلاوين","district":"السنبلاوين"},{"region":"شمال الدلتا","gov":"كفر الشيخ","area":"الرياض","district":"الرياض"},{"region":"شمال الدلتا","gov":"كفر الشيخ","area":"بندر كفر الشيخ","district":"بندر كفر الشيخ"},{"region":"شمال الدلتا","gov":"كفر الشيخ","area":"دسوق","district":"دسوق"},{"region":"شمال الدلتا","gov":"كفر الشيخ","area":"سيدى غازى","district":"سيدى غازى"},{"region":"شمال الدلتا","gov":"كفر الشيخ","area":"فوه","district":"فوه"},{"region":"شمال الدلتا","gov":"كفر الشيخ","area":"قلين","district":"قلين"},{"region":"شمال الدلتا","gov":"كفر الشيخ","area":"كفر الشيخ","district":"كفر الشيخ"},{"region":"شمال الصعيد","gov":"الفيوم","area":"البحارى","district":"البحارى"},{"region":"شمال الصعيد","gov":"الفيوم","area":"الجامعة","district":"الجامعة"},{"region":"شمال الصعيد","gov":"الفيوم","area":"المسلة","district":"المسلة"},{"region":"شمال الصعيد","gov":"المنيا","area":"ابو قرقاص","district":"ابو قرقاص"},{"region":"شمال الصعيد","gov":"المنيا","area":"ارض شلبى","district":"ارض شلبى"},{"region":"شمال الصعيد","gov":"المنيا","area":"المنيا","district":"المنيا"},{"region":"شمال الصعيد","gov":"المنيا","area":"بنى مزار","district":"بنى مزار"},{"region":"شمال الصعيد","gov":"المنيا","area":"دير مواس","district":"دير مواس"},{"region":"شمال الصعيد","gov":"المنيا","area":"سمالوط","district":"سمالوط"},{"region":"شمال الصعيد","gov":"المنيا","area":"مغاغة","district":"مغاغة"},{"region":"شمال الصعيد","gov":"المنيا","area":"ملوى","district":"ملوى"},{"region":"شمال الصعيد","gov":"بني سويف","area":"الفشن","district":"الفشن"},{"region":"شمال الصعيد","gov":"بني سويف","area":"اهناسيا المدينة","district":"اهناسيا المدينة"},{"region":"شمال الصعيد","gov":"بني سويف","area":"بنى سويف","district":"بنى سويف"},{"region":"شمال الصعيد","gov":"بني سويف","area":"سمسطا","district":"سمسطا"},{"region":"وسط الصعيد","gov":"اسيوط","area":"ابنوب","district":"ابنوب"},{"region":"وسط الصعيد","gov":"اسيوط","area":"ابو تيج","district":"ابو تيج"},{"region":"وسط الصعيد","gov":"اسيوط","area":"اسيوط","district":"اسيوط"},{"region":"وسط الصعيد","gov":"اسيوط","area":"البدارى","district":"البدارى"},{"region":"وسط الصعيد","gov":"اسيوط","area":"الفتح","district":"الفتح"},{"region":"وسط الصعيد","gov":"اسيوط","area":"القوصية","district":"القوصية"},{"region":"وسط الصعيد","gov":"اسيوط","area":"اول اسيوط","district":"اول اسيوط"},{"region":"وسط الصعيد","gov":"اسيوط","area":"ثان اسيوط","district":"ثان اسيوط"},{"region":"وسط الصعيد","gov":"اسيوط","area":"حى شرق","district":"حى شرق"},{"region":"وسط الصعيد","gov":"اسيوط","area":"ديروط","district":"ديروط"},{"region":"وسط الصعيد","gov":"اسيوط","area":"ساحل سليم","district":"ساحل سليم"},{"region":"وسط الصعيد","gov":"اسيوط","area":"صدفا","district":"صدفا"},{"region":"وسط الصعيد","gov":"اسيوط","area":"منفلوط","district":"منفلوط"},{"region":"وسط الصعيد","gov":"سوهاج","area":"اخميم","district":"اخميم"},{"region":"وسط الصعيد","gov":"سوهاج","area":"البلينا","district":"البلينا"},{"region":"وسط الصعيد","gov":"سوهاج","area":"المراغة","district":"المراغة"},{"region":"وسط الصعيد","gov":"سوهاج","area":"المنشاه","district":"المنشاه"},{"region":"وسط الصعيد","gov":"سوهاج","area":"ثان سوهاج","district":"ثان سوهاج"},{"region":"وسط الصعيد","gov":"سوهاج","area":"جرجا","district":"جرجا"},{"region":"وسط الصعيد","gov":"سوهاج","area":"ساقلتة","district":"ساقلتة"},{"region":"وسط الصعيد","gov":"سوهاج","area":"طما","district":"طما"},{"region":"وسط الصعيد","gov":"سوهاج","area":"طهطا","district":"طهطا"},{"region":"وسط الصعيد","gov":"سوهاج","area":"نجع اولاد نصير","district":"نجع اولاد نصير"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"أول القاهرة","district":"عابدين"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"أول القاهرة","district":"الأزبكية"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"أول القاهرة","district":"باب الشعرية"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"أول القاهرة","district":"الموسكي"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"ثاني القاهرة","district":"حلوان"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"ثاني القاهرة","district":"المعادي"},{"region":"أقليم القاهرة الكبري","gov":"القاهرة","area":"ثاني القاهرة","district":"التبين"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"الهرم","district":"المنيب"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"الهرم","district":"فيصل"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"إمبابة","district":"إمبابة"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"إمبابة","district":"وراق"},{"region":"أقليم القاهرة الكبري","gov":"الجيزة","area":"إمبابة","district":"أرض اللواء"}];
+const MERCHANT_TYPES = ["أجهزة كهربائية","أدوات صحية","أدوات مكتبية","إكسسوارات موبايل","اكسسوارات","البقالة","الحلويات","الخضروات والفاكهة","الصيدليات","المطاعم","باعة الجملة","بقالة","بنزينة","تجار التجزئة","تجار السوبرماركت","تجار الكيماويات","تجار قطع غيار السيارات","توكيلات السيارات","خدمات الإنترنت","خدمات الصيانة","خدمات محمول-سنترال","خدمات نقل","سوبرماركت","شركات سياحية","صالون حلاقة","صالونات تجميل","صرافة","عطارة","كافيتريا","كافيه","كشك","لوازم حفلات","مستلزمات صحية","ملابس","مواد غذائية","ميني ماركت","نقل وشحن","هايبرماركت"];
+
+// ===== INIT =====
+window.addEventListener('DOMContentLoaded', () => {
+  initRegions();
+  initMerchantTypes();
+  autoRequestLocation();
+});
+
+function initRegions() {
+  const sel = document.getElementById('region');
+  const regions = [...new Set(ROUTES_DATA.map(r => r.region))].sort();
+  regions.forEach(r => {
+    const opt = document.createElement('option');
+    opt.value = r; opt.textContent = r;
+    sel.appendChild(opt);
+  });
+}
+
+function initMerchantTypes() {
+  const sel = document.getElementById('merchantType');
+  MERCHANT_TYPES.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t; opt.textContent = t;
+    sel.appendChild(opt);
+  });
+}
+
+// ===== ROUTE CASCADE =====
+function onRegionChange() {
+  const region = document.getElementById('region').value;
+  const govSel = document.getElementById('gov');
+  govSel.innerHTML = '<option value="">-- اختر المحافظة --</option>';
+  document.getElementById('area').innerHTML = '<option value="">-- اختر المنطقة --</option>';
+  document.getElementById('district').innerHTML = '<option value="">-- اختر الحي / القرية --</option>';
+  resetRepDropdown();
+  if (!region) return;
+  const govs = [...new Set(ROUTES_DATA.filter(r => r.region === region).map(r => r.gov))].sort();
+  govs.forEach(g => {
+    const opt = document.createElement('option');
+    opt.value = g; opt.textContent = g;
+    govSel.appendChild(opt);
+  });
+}
+
+function onGovChange() {
+  const region = document.getElementById('region').value;
+  const gov = document.getElementById('gov').value;
+  const areaSel = document.getElementById('area');
+  areaSel.innerHTML = '<option value="">-- اختر المنطقة --</option>';
+  document.getElementById('district').innerHTML = '<option value="">-- اختر الحي / القرية --</option>';
+  resetRepDropdown();
+  if (!gov) return;
+  const areas = [...new Set(ROUTES_DATA.filter(r => r.region === region && r.gov === gov).map(r => r.area))].sort();
+  areas.forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a; opt.textContent = a;
+    areaSel.appendChild(opt);
+  });
+}
+
+function onAreaChange() {
+  const region = document.getElementById('region').value;
+  const gov = document.getElementById('gov').value;
+  const area = document.getElementById('area').value;
+  const distSel = document.getElementById('district');
+  distSel.innerHTML = '<option value="">-- اختر الحي / القرية --</option>';
+  if (!area) { resetRepDropdown(); return; }
+  const dists = [...new Set(ROUTES_DATA.filter(r => r.region===region && r.gov===gov && r.area===area).map(r => r.district))].sort();
+  dists.forEach(d => {
+    const opt = document.createElement('option');
+    opt.value = d; opt.textContent = d;
+    distSel.appendChild(opt);
+  });
+  // Filter reps by gov+area
+  filterRepsByArea(gov, area);
+}
+
+// ===== REP DROPDOWN =====
+function resetRepDropdown() {
+  const sel = document.getElementById('repName');
+  sel.innerHTML = '<option value="">-- اختر اسمك --</option>';
+  document.getElementById('repHint').classList.remove('show');
+}
+
+function filterRepsByArea(gov, area) {
+  const sel = document.getElementById('repName');
+  sel.innerHTML = '<option value="">-- اختر اسمك --</option>';
+  
+  // Filter reps matching this gov+area
+  const filtered = REPS_DATA.filter(r => r.gov === gov && r.area === area);
+  
+  if (filtered.length === 0) {
+    // If no exact match, show all reps in this gov
+    const byGov = REPS_DATA.filter(r => r.gov === gov);
+    byGov.forEach(r => {
+      const opt = document.createElement('option');
+      opt.value = r.name;
+      opt.textContent = r.name;
+      sel.appendChild(opt);
+    });
+  } else {
+    filtered.forEach(r => {
+      const opt = document.createElement('option');
+      opt.value = r.name;
+      opt.textContent = r.name;
+      sel.appendChild(opt);
+    });
+  }
+  
+  document.getElementById('repHint').classList.add('show');
+}
+
+function onRepChange() {
+  // Rep selected - could auto-fill supervisor etc if data available
+  const repName = document.getElementById('repName').value;
+  // For now just clear errors
+  if (repName) {
+    document.getElementById('repName').classList.remove('field-error');
+    document.getElementById('err-repName').style.display = 'none';
+  }
+}
+
+// ===== LOCATION =====
+let locationCaptured = false;
+
+function autoRequestLocation() {
+  if (!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(
+    pos => setLocationSuccess(pos),
+    err => {},
+    { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+  );
+}
+
+function captureLocation() {
+  const txt = document.getElementById('locationText');
+  const area = document.getElementById('locationArea');
+  area.className = 'location-area';
+  txt.textContent = 'جاري تحديد الموقع...';
+  if (!navigator.geolocation) {
+    txt.textContent = 'المتصفح لا يدعم تحديد الموقع';
+    area.className = 'location-area error-state';
+    return;
+  }
+  function tryLow() {
+    navigator.geolocation.getCurrentPosition(
+      pos => setLocationSuccess(pos),
+      err => {
+        txt.textContent = 'تعذر تحديد الموقع — تأكد من تفعيل خدمة الموقع (GPS) وحاول مرة أخرى.';
+        area.className = 'location-area error-state';
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 30000 }
+    );
+  }
+  navigator.geolocation.getCurrentPosition(
+    pos => setLocationSuccess(pos),
+    err => tryLow(),
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+  );
+}
+
+function setLocationSuccess(pos) {
+  const lat = pos.coords.latitude.toFixed(7);
+  const lng = pos.coords.longitude.toFixed(7);
+  document.getElementById('latitude').value = lat;
+  document.getElementById('longitude').value = lng;
+  document.getElementById('locationText').textContent = '✅ تم تحديد الموقع (' + lat + ', ' + lng + ')';
+  document.getElementById('locationArea').className = 'location-area success';
+  locationCaptured = true;
+}
+
+// ===== PHOTO =====
+let photoBase64 = null;
+
+function previewPhoto(input) {
+  if (!input.files || !input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    photoBase64 = e.target.result;
+    document.getElementById('photoImg').src = photoBase64;
+    document.getElementById('photoPreview').style.display = 'block';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+// ===== VALIDATION =====
+function validate() {
+  const fields = ['region','gov','area','district','repName','supName','smName','rmName','shopName','clientName','traderPhone','husamCode','machineType','merchantType'];
+  let ok = true;
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    const errEl = document.getElementById('err-' + id);
+    if (!el) return;
+    const val = el.value.trim();
+    if (!val) {
+      el.classList.add('field-error');
+      if (errEl) errEl.style.display = 'block';
+      ok = false;
+    } else {
+      el.classList.remove('field-error');
+      if (errEl) errEl.style.display = 'none';
+    }
+  });
+  const phone = document.getElementById('traderPhone').value.trim();
+  if (phone && !/^01[0-9]{9}$/.test(phone)) {
+    document.getElementById('traderPhone').classList.add('field-error');
+    document.getElementById('err-traderPhone').style.display = 'block';
+    ok = false;
+  }
+  return ok;
+}
+
+// ===== SUBMIT =====
+document.getElementById('mainForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  if (!validate()) { window.scrollTo({top:0,behavior:'smooth'}); return; }
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ جاري الإرسال...';
+  const payload = {
+    repName:      document.getElementById('repName').value.trim(),
+    supName:      document.getElementById('supName').value.trim(),
+    smName:       document.getElementById('smName').value.trim(),
+    rmName:       document.getElementById('rmName').value.trim(),
+    region:       document.getElementById('region').value,
+    gov:          document.getElementById('gov').value,
+    area:         document.getElementById('area').value,
+    district:     document.getElementById('district').value,
+    shopName:     document.getElementById('shopName').value.trim(),
+    clientName:   document.getElementById('clientName').value.trim(),
+    traderPhone:  document.getElementById('traderPhone').value.trim(),
+    husamCode:    document.getElementById('husamCode').value.trim(),
+    machineType:  document.getElementById('machineType').value,
+    merchantType: document.getElementById('merchantType').value,
+    latitude:     document.getElementById('latitude').value,
+    longitude:    document.getElementById('longitude').value,
+    photoBase64:  photoBase64 || '',
+    photoName:    document.getElementById('photoInput').files[0]?.name || 'photo.jpg'
+  };
+  try {
+    await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    document.getElementById('successMsg').textContent = 'تم تسجيل زيارة ' + payload.shopName + ' بنجاح ✅';
+    document.getElementById('successModal').classList.add('show');
+  } catch(err) {
+    alert('حدث خطأ في الإرسال. يرجى التحقق من الاتصال بالإنترنت والمحاولة مرة أخرى.');
+  }
+  btn.disabled = false;
+  btn.textContent = '✅ إرسال الزيارة';
+});
+
+function resetForm() {
+  document.getElementById('mainForm').reset();
+  document.getElementById('successModal').classList.remove('show');
+  document.getElementById('photoPreview').style.display = 'none';
+  document.getElementById('locationArea').className = 'location-area';
+  document.getElementById('locationText').textContent = 'اضغط لتحديد موقعك الحالي';
+  document.getElementById('latitude').value = '';
+  document.getElementById('longitude').value = '';
+  photoBase64 = null;
+  locationCaptured = false;
+  resetRepDropdown();
+  onRegionChange();
+  window.scrollTo({top:0,behavior:'smooth'});
+  autoRequestLocation();
+}
+</script>
+</body>
+</html>
